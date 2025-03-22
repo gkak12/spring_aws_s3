@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDto {
+public class AwsS3RequestDto {
 
     private String bucketName;
     private String fileName;

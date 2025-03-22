@@ -1,6 +1,6 @@
 package com.spring.aws.s3.common;
 
-import com.spring.aws.s3.domain.dto.RequestDto;
+import com.spring.aws.s3.domain.dto.AwsS3RequestDto;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,16 +54,16 @@ public class AwsS3Handler {
         this.s3Client = builder.build();
     }
 
-    public void putObject(RequestDto requestDto) {
+    public void putObject(AwsS3RequestDto awsS3RequestDto) {
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(requestDto.getBucketName())
-                    .key(requestDto.getFileName())
+                    .bucket(awsS3RequestDto.getBucketName())
+                    .key(awsS3RequestDto.getFileName())
                     .build();
 
             PutObjectResponse response = this.s3Client.putObject(
                 putObjectRequest
-                , RequestBody.fromBytes(requestDto.getMultipartFile().getBytes())
+                , RequestBody.fromBytes(awsS3RequestDto.getMultipartFile().getBytes())
             );
 
             int statusCode = response.sdkHttpResponse().statusCode();
@@ -79,20 +79,20 @@ public class AwsS3Handler {
         }
     }
 
-    public Resource getObject(RequestDto requestDto) {
+    public Resource getObject(AwsS3RequestDto awsS3RequestDto) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(requestDto.getBucketName())
-                .key(requestDto.getFileName())
+                .bucket(awsS3RequestDto.getBucketName())
+                .key(awsS3RequestDto.getFileName())
                 .build();
 
         ResponseInputStream<GetObjectResponse> s3ObjectStream = s3Client.getObject(getObjectRequest);
         return new InputStreamResource(s3ObjectStream);
     }
 
-    public boolean deleteObject(RequestDto requestDto) {
+    public boolean deleteObject(AwsS3RequestDto awsS3RequestDto) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(requestDto.getBucketName())
-                .key(requestDto.getFileName())
+                .bucket(awsS3RequestDto.getBucketName())
+                .key(awsS3RequestDto.getFileName())
                 .build();
 
         DeleteObjectResponse response = s3Client.deleteObject(deleteObjectRequest);
