@@ -56,11 +56,12 @@ public class AwsS3Handler {
 
     public void putObject(String bucket, String key, MultipartFile mfile) {
         try {
-            PutObjectResponse response = this.s3Client.putObject(
-                PutObjectRequest.builder().bucket(bucket).key(key).build()
-                , RequestBody.fromBytes(mfile.getBytes())
-            );
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
 
+            PutObjectResponse response = this.s3Client.putObject(putObjectRequest, RequestBody.fromBytes(mfile.getBytes()));
             int statusCode = response.sdkHttpResponse().statusCode();
 
             if(statusCode == 200 || statusCode == 204){
