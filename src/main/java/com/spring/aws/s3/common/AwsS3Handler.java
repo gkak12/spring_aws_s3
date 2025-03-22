@@ -120,7 +120,7 @@ public class AwsS3Handler {
         }
     }
 
-    public boolean deleteObject(AwsS3RequestDto awsS3RequestDto) {
+    public void deleteObject(AwsS3RequestDto awsS3RequestDto) {
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(awsS3RequestDto.getBucketName())
@@ -128,7 +128,14 @@ public class AwsS3Handler {
                 .build();
 
             DeleteObjectResponse response = s3Client.deleteObject(deleteObjectRequest);
-            return response.sdkHttpResponse().statusCode() == 204 ? true : false;
+            int statusCode = response.sdkHttpResponse().statusCode();
+
+            if(statusCode == 204){
+                log.info("SUCCESS: AWS S3 delete object to S3.");
+            } else {
+                log.error("ERROR: AWS S3 delete object to S3.");
+                throw new RuntimeException("ERROR: AWS S3 upload object to S3.");
+            }
         } catch (NoSuchKeyException e) {
             throw new RuntimeException("ERROR: 삭제하려는 파일이 존재하지 않습니다.", e);
         } catch (SdkServiceException e) {
