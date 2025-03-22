@@ -79,20 +79,20 @@ public class AwsS3Handler {
         }
     }
 
-    public Resource getObject(String bucket, String fileName) {
+    public Resource getObject(RequestDto requestDto) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucket)
-                .key(fileName)
+                .bucket(requestDto.getBucketName())
+                .key(requestDto.getFileName())
                 .build();
 
         ResponseInputStream<GetObjectResponse> s3ObjectStream = s3Client.getObject(getObjectRequest);
         return new InputStreamResource(s3ObjectStream);
     }
 
-    public boolean deleteObject(String bucket, String fileName) {
+    public boolean deleteObject(RequestDto requestDto) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucket)
-                .key(fileName)
+                .bucket(requestDto.getBucketName())
+                .key(requestDto.getFileName())
                 .build();
 
         DeleteObjectResponse response = s3Client.deleteObject(deleteObjectRequest);
