@@ -14,10 +14,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,5 +82,17 @@ public class AwsS3Handler {
 
         ResponseInputStream<GetObjectResponse> s3ObjectStream = s3Client.getObject(getObjectRequest);
         return new InputStreamResource(s3ObjectStream);
+    }
+
+    public boolean deleteObject(String bucket, String fileName) {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(fileName)
+                .build();
+
+        DeleteObjectResponse response = s3Client.deleteObject(deleteObjectRequest);
+
+        boolean res = response.sdkHttpResponse().statusCode() == 204 ? true : false;
+        return res;
     }
 }
