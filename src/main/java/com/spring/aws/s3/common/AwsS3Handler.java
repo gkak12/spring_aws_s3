@@ -1,12 +1,12 @@
 package com.spring.aws.s3.common;
 
+import com.spring.aws.s3.domain.dto.RequestDto;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -54,14 +54,18 @@ public class AwsS3Handler {
         this.s3Client = builder.build();
     }
 
-    public void putObject(String bucket, String key, MultipartFile mfile) {
+    public void putObject(RequestDto requestDto) {
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
+                    .bucket(requestDto.getBucketName())
+                    .key(requestDto.getFileName())
                     .build();
 
-            PutObjectResponse response = this.s3Client.putObject(putObjectRequest, RequestBody.fromBytes(mfile.getBytes()));
+            PutObjectResponse response = this.s3Client.putObject(
+                putObjectRequest
+                , RequestBody.fromBytes(requestDto.getMultipartFile().getBytes())
+            );
+
             int statusCode = response.sdkHttpResponse().statusCode();
 
             if(statusCode == 200 || statusCode == 204){
